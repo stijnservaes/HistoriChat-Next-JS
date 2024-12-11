@@ -1,14 +1,19 @@
-import type { Metadata } from "next";
-import "normalize.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material";
+import {
+  ClerkProvider,
+
+} from "@clerk/nextjs";
+import type { Metadata } from "next";
+import "normalize.css";
 import theme from "./theme";
+import NavBar from "./components/Navbar";
 
 const roboto = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   subsets: ["latin"],
-  variable: "--font-roboto",
+  display: 'swap'
 });
 
 export const metadata: Metadata = {
@@ -22,12 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={roboto.variable}>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </AppRouterCacheProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" className={roboto.className}>
+        <body>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <header>
+                <NavBar />
+              </header>
+              <main>{children}</main>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,6 +1,6 @@
 
 export default function Home() {
   return (
-   <div>test</div>
+   <div>Whereas disregard and contempt for human rights have resulted</div>
   );
 }
