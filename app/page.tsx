@@ -1,6 +1,17 @@
+import { auth } from "@clerk/nextjs/server";
+import { Container } from "@mui/material";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const { userId } = await auth()
+  if (!userId) {
+    redirect("/sign-in")
+  }
+
+
   return (
-   <div>Whereas disregard and contempt for human rights have resulted</div>
+    <Container sx={{ marginTop: "1rem", display: "flex", justifyContent: "center"}}>
+
+    </Container>
   );
 }

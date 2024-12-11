@@ -1,9 +1,9 @@
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import { Roboto } from "next/font/google";
-import { ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark} from '@clerk/themes'
 import type { Metadata } from "next";
-import "normalize.css";
 import "./globals.css"
 import theme from "./theme";
 import NavBar from "./components/Navbar";
@@ -25,11 +25,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{baseTheme: dark}} signInUrl="/dashboard" signUpUrl="/dashboard">
       <html lang="en" className={roboto.className}>
         <body>
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
+              <CssBaseline />
               <header>
                 <NavBar />
               </header>

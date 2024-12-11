@@ -6,7 +6,7 @@ const theme = createTheme({
     fontFamily: 'Roboto, sans-serif'
   },
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
       main: '#39A48A',
     },
