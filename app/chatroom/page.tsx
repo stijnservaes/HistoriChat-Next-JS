@@ -1,19 +1,37 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from "@mui/material";
-import Form from "next/form"
-import { selectRoom } from "./actions";
-import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import { Container, Paper, Typography } from "@mui/material";
+import SelectForm from "./components/SelectForm";
+
+
+async function fetchRoomList() {
+  try {
+    const response = await fetch("http://localhost:3001/rooms");
+    return response.json();
+  } catch (e) {
+    throw new Error(`Network error: ${e}`);
+  }
+}
+
+export type Room = {
+  name: string,
+  id: number
+}
+
+
 
 export default async function Page() {
+  const roomList: Room[] = await fetchRoomList()
+    
+  if (!roomList || roomList.length === 0) {
+    return (
+      <Container sx={{height: "91vh", padding: 3}}>
+        <Paper elevation={5} sx={{padding: 1, height: '100%', display: "flex", justifyContent: "center", alignItems: "center"}}>
+          <Typography variant="h5">Could not find any chatrooms. Please try again later.</Typography>
+        </Paper>
+      </Container>
+    )
+  }
+
+
   return (
     <Container sx={{ height: "91vh", padding: 3 }}>
       <Paper
@@ -26,18 +44,7 @@ export default async function Page() {
         }}
         elevation={5}
       >
-        <Box component={Form} action={selectRoom} sx={{display: "flex", flexDirection: "column", gap: 3, width: 250}}>
-          <Typography variant="h5">Choose your Chatroom</Typography>
-          <FormControl fullWidth>
-            <InputLabel id="room-select">Chatroom</InputLabel>
-            <Select labelId="room-select" name="selectedRoom" label="Chatroom" defaultValue={10}>
-              <MenuItem value={10}>Victorian Era</MenuItem>
-              <MenuItem value={20}>Shakespearen Era</MenuItem>
-              <MenuItem value={30}>Roman Era</MenuItem>
-            </Select>
-          </FormControl>
-          <Button endIcon={<MeetingRoomIcon />} variant="contained" type="submit" color="success">Enter the Time Machine</Button>
-        </Box>
+      <SelectForm roomList={roomList}/>
       </Paper>
     </Container>
   );

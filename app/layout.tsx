@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={{baseTheme: dark}} signInUrl="/chatroom" signUpUrl="/chatroom">
+    <ClerkProvider appearance={{baseTheme: dark}}>
       <html lang="en" className={roboto.className}>
         <body>
           <AppRouterCacheProvider>
