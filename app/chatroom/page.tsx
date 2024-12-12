@@ -1,31 +1,42 @@
 import { Container, Paper, Typography } from "@mui/material";
 import SelectForm from "./components/SelectForm";
+import { auth } from "@clerk/nextjs/server";
 
-
-async function fetchRoomList() {
-  try {
-    const response = await fetch("http://localhost:3001/rooms");
-    return response.json();
-  } catch (e) {
-    throw new Error(`Network error: ${e}`);
-  }
-}
 
 export type Room = {
   name: string,
   id: number
 }
 
+type Response = {
+  success: boolean,
+  message: string | Room[]
+}
+
+async function fetchRoomList() {
+  try {
+    const {getToken} = await auth()
+    const response = await fetch("http://localhost:3001/rooms", {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`
+      }
+    });
+
+    return await response.json();
+  } catch (e) {
+    throw new Error(`Network error: ${e}`);
+  }
+}
 
 
 export default async function Page() {
-  const roomList: Room[] = await fetchRoomList()
+  const response: Response = await fetchRoomList()
     
-  if (!roomList || roomList.length === 0) {
+  if (!response.success || response.message.length === 0) {
     return (
       <Container sx={{height: "91vh", padding: 3}}>
         <Paper elevation={5} sx={{padding: 1, height: '100%', display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <Typography variant="h5">Could not find any chatrooms. Please try again later.</Typography>
+          <Typography variant="h6" sx={{textAlign: "center"}}>Could not find any chatrooms.<br />Please try again later.</Typography>
         </Paper>
       </Container>
     )
@@ -44,7 +55,7 @@ export default async function Page() {
         }}
         elevation={5}
       >
-      <SelectForm roomList={roomList}/>
+      <SelectForm roomList={response.message as Room[]}/>
       </Paper>
     </Container>
   );
