@@ -20,7 +20,7 @@ export default async function Page({
   const roomId = Number((await params).roomId);
   const { getToken } = await auth()
 
-  const response = await fetch(`http://localhost:3001/rooms/${roomId}`, {
+  const response = await fetch(`${process.env.BACKEND_URL}/rooms/${roomId}`, {
     headers: {
       Authorization: `Bearer ${await getToken()}`
     }
