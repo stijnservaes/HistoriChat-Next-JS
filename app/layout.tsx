@@ -30,7 +30,7 @@ export default function RootLayout({
         <body>
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
-              <CssBaseline />
+              <CssBaseline  enableColorScheme/>
               <header>
                 <NavBar />
               </header>
