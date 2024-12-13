@@ -48,7 +48,7 @@ export default function ChatWindow({
 
     if (inputMessage) {
       setIsSending(true);
-      socket.emit("chat", { roomId: roomId, message: inputMessage });
+      socket.emit("chat", { roomId: roomId, message: inputMessage.length > 200 ? inputMessage.slice(0, 200) : inputMessage });
       setInputMessage("");
     }
   }
@@ -228,6 +228,7 @@ export default function ChatWindow({
                   label="Send message"
                   variant="outlined"
                   sx={{ flexGrow: 1 }}
+                  slotProps={{htmlInput: {maxLength: 200}}}
                 />
                 <Box
                   sx={{
