@@ -71,7 +71,7 @@ export default function ChatWindow({
     async function connectAndJoin() {
       const token = await getToken();
 
-      newSocket = io(process.env.BACKEND_URL, {
+      newSocket = io(process.env.BACKEND_WS, {
         auth: {
           token: token,
         },
