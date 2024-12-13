@@ -5,6 +5,7 @@ import {
   Alert,
   Box,
   Button,
+  Fade,
   IconButton,
   Paper,
   Stack,
@@ -13,7 +14,7 @@ import {
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import SendIcon from "@mui/icons-material/Send";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { redirect } from "next/navigation";
 import { ChatMessage } from "../page";
@@ -28,9 +29,14 @@ export default function ChatWindow({
 }) {
   const [messages, setMessages] = useState(initialMessages);
   const [socket, setSocket] = useState(null as Socket | null);
-  const [error, setError] = useState({ success: true, message: "" });
+  const [error, setError] = useState({ success: true, message: "test" });
   const [isLoading, setIsLoading] = useState(false);
+  const [exceedToken, setExceedToken] = useState({
+    exceeds: false,
+    message: "test",
+  });
   const [inputMessage, setInputMessage] = useState("");
+  const chatWindow = useRef<HTMLDivElement | null>(null)
 
   const { getToken } = useAuth();
   const { user } = useUser();
@@ -43,6 +49,13 @@ export default function ChatWindow({
       setInputMessage("");
     }
   }
+
+  useEffect(() => {
+    if (chatWindow.current) {
+      chatWindow.current.scrollTop = chatWindow.current.scrollHeight;
+    }
+  }, [messages, isLoading]);
+
 
   useEffect(() => {
     let newSocket: Socket | null = null;
@@ -89,7 +102,11 @@ export default function ChatWindow({
     });
 
     socket.on("chat", (payload: { success: boolean; message: ChatMessage }) => {
-      setMessages((prev) => [...prev, payload.message])
+      setMessages((prev) => [...prev, payload.message]);
+    });
+
+    socket.on("no_tokens", (msg: string) => {
+      setExceedToken({ exceeds: true, message: msg });
     });
 
     return () => {
@@ -97,12 +114,18 @@ export default function ChatWindow({
       socket.off("connect_error");
       socket.off("error");
       socket.off("chat");
+      socket.off("no_tokens");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   return (
     <Stack direction="column" gap={2} sx={{ height: "100%", padding: 2 }}>
+      {exceedToken.exceeds && (
+        <Fade in={true}>
+          <Alert variant="standard" severity="warning" sx={{position: "fixed", top: "20vh", left: "50vw", transform: "translateX(-50%)"}}>{exceedToken.message}</Alert>
+        </Fade>
+      )}
       {!error.success ? (
         <Box
           sx={{
@@ -138,14 +161,17 @@ export default function ChatWindow({
       ) : (
         <>
           <Paper
+          ref={chatWindow}
             elevation={1}
-            sx={{ flexGrow: 1, padding: 3, overflowY: "auto" }}
+            sx={{ flexGrow: 1, padding: 3, overflowY: "auto", scrollBehavior: "smooth" }}
           >
-
-            {messages.map(message => (
-              <ChatBubble textMessage={message} key={message._id} isFromUser={user?.username === message.byUser} />
+            {messages.map((message) => (
+              <ChatBubble
+                textMessage={message}
+                key={message._id}
+                isFromUser={user?.username === message.byUser}
+              />
             ))}
-
           </Paper>
           <Stack direction="row">
             <TextField
@@ -161,7 +187,7 @@ export default function ChatWindow({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginX: 2,
+                marginLeft: 2,
               }}
             >
               <IconButton onClick={handleSend}>
@@ -174,4 +200,3 @@ export default function ChatWindow({
     </Stack>
   );
 }
-
