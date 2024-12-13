@@ -16,7 +16,7 @@ type Response = {
 async function fetchRoomList() {
   try {
     const {getToken} = await auth()
-    const response = await fetch(`${process.env.BACKEND_URL}/rooms`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/rooms`, {
       headers: {
         Authorization: `Bearer ${await getToken()}`
       }
