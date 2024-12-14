@@ -1,5 +1,5 @@
 # HistoriChat-Next-JS
-Frontend application for HistoriChat App. Backend on [https://github.com/ComradeStijn/Decidely-API](https://github.com/stijnservaes/HistoriChat).
+Frontend application for HistoriChat App. Backend on https://github.com/stijnservaes/HistoriChat.
 
 ## Status
 ### Finished
